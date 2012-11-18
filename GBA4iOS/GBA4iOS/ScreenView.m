@@ -21,6 +21,7 @@
 #import "../../iGBA/Frameworks/CoreSurface.h"
 #import "ScreenView.h"
 #import "../../iGBA/iphone/gpSPhone/src/gpSPhone_iPhone.h"
+#import "SettingViewController.h"
 
 #define RADIANS(degrees) ((degrees * M_PI) / 180.0)
 #define DEGREES(radians) (radians * 180.0/M_PI)
@@ -49,6 +50,7 @@ void updateScreen() {
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     LOGDEBUG("ScreenView.dealloc()");
 //    [ timer invalidate];
     [ screenLayer release ];
@@ -105,38 +107,21 @@ void updateScreen() {
 
     LOGDEBUG("ScreenView.initGraphics(): Creating screen layer");
     screenLayer = [[CALayer layer] retain];
-        
-    if(preferences.landscape)
-    {
-		CGRect FullContentBounds;
-		struct CGSize size = [UIScreen mainScreen].bounds.size;
-		FullContentBounds.origin.x = FullContentBounds.origin.y = 0;
-		FullContentBounds.size = CGSizeMake(size.height, size.width); 
-		[self setBounds: FullContentBounds];
-		[self setRotationBy: 90];
-		if(preferences.scaled)
-		{
-	        [screenLayer setFrame: CGRectMake(0.0f, 0.0f, self.bounds.size.width, self.bounds.size.height)];
-		}
-		else
-		{
-	        [screenLayer setFrame: CGRectMake(80.0f, 40.0f, 320.0f, 240.0f)];		
-		}
-	}
-	else
-	{
-		if(preferences.scaled)
-		{
-	        [screenLayer setFrame: CGRectMake(0.0f, 0.0f, self.bounds.size.width, self.bounds.size.height)];
-		}
-		else
-		{
-	        [screenLayer setFrame: CGRectMake(40.0f, 40.0f, 240.0f, 160.0f)];		
-		}
-	}
-    
     [screenLayer setContents: screenSurface];
     [screenLayer setOpaque: YES];
+    
+    
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults boolForKey:USER_DEFAULT_KEY_SMOOTH_SCALING] == YES)
+    {
+        self.layer.minificationFilter = kCAFilterLinear;
+        self.layer.magnificationFilter = kCAFilterLinear;
+    }
+    else
+    {
+        self.layer.minificationFilter = kCAFilterNearest;
+        self.layer.magnificationFilter = kCAFilterNearest;
+    }
 
     LOGDEBUG("ScreenView.initGraphics(): Adding layer as sublayer");
     [self.layer addSublayer: screenLayer ];
@@ -145,77 +130,31 @@ void updateScreen() {
     CoreSurfaceBufferUnlock(screenSurface);
 
     BaseAddress = CoreSurfaceBufferGetBaseAddress(screenSurface);
-    LOGDEBUG("ScreenView.initializeGraphics: New base address %p", BaseAddress);
-/*    
-    timer = [NSTimer scheduledTimerWithTimeInterval:0.100
-                 target:self
-                 selector:@selector(updateScreen)
-                 userInfo:nil
-                 repeats:YES];
-*/                
+    LOGDEBUG("ScreenView.initializeGraphics: New base address %p", BaseAddress);             
     LOGDEBUG("ScreenView.initGraphics(): Done");
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(settingsChanged) name:@"SettingsChanged" object:nil];
 }
 
-- (void)rotateForDeviceOrientation:(UIDeviceOrientation)deviceOrientation {
-    
-    [CATransaction begin]; 
-    [CATransaction setValue: (id) kCFBooleanTrue forKey: kCATransactionDisableActions];
-    
-    if (deviceOrientation == UIDeviceOrientationLandscapeLeft) {
-        self.transform = CGAffineTransformMakeRotation(RADIANS(90.0));
-        self.frame = CGRectMake(0, 0, 320, 480);
-        if (preferences.selectedLandscapeSkin == 0) {
-            [screenLayer setFrame:CGRectMake(120.0f, 40.0f, 240.0f, 160.0f)];
-        }
-        else {
-            if (preferences.scaled) {
-                [screenLayer setFrame:CGRectMake(0.0f, 0.0f, 480.0f, 320.0f)];
-            }
-            else {
-                [screenLayer setFrame: CGRectMake(120.0f, 80.0f, 240.0f, 160.0f)];
-               
-            }
-        }
+- (void)settingsChanged
+{
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults boolForKey:USER_DEFAULT_KEY_SMOOTH_SCALING] == YES)
+    {
+        self.layer.minificationFilter = kCAFilterLinear;
+        self.layer.magnificationFilter = kCAFilterLinear;
     }
-    else if (deviceOrientation == UIDeviceOrientationLandscapeRight) {
-        self.transform = CGAffineTransformMakeRotation(RADIANS(270.0));
-        self.frame = CGRectMake(0, 0, 320, 480);
-        if (preferences.selectedLandscapeSkin == 0) {
-            [screenLayer setFrame:CGRectMake(120.0f, 40.0f, 240.0f, 160.0f)];
-        }
-        else {
-            if (preferences.scaled) {
-                [screenLayer setFrame:CGRectMake(0.0f, 0.0f, 480.0f, 320.0f)];
-            }
-            else {
-                [screenLayer setFrame: CGRectMake(120.0f, 80.0f, 240.0f, 160.0f)];
-                
-            }
-        }
+    else
+    {
+        self.layer.minificationFilter = kCAFilterNearest;
+        self.layer.magnificationFilter = kCAFilterNearest;
     }
-    else if (deviceOrientation == UIDeviceOrientationPortrait) {
-        self.transform = CGAffineTransformMakeRotation(RADIANS(0.0));
-        self.frame = CGRectMake(0, 0, 320, 240);
-        if (preferences.scaled) {
-	        [screenLayer setFrame: CGRectMake(0.0f, 0.0f, 320.0f, 240.0f)];
-		}
-		else {
-	        [screenLayer setFrame: CGRectMake(40.0f, 40.0f, 240.0f, 160.0f)];		
-		}
-    }
-    else if (deviceOrientation == UIDeviceOrientationPortraitUpsideDown) {
-        self.transform = CGAffineTransformMakeRotation(RADIANS(180.0));
-        self.frame = CGRectMake(0, 0, 320, 240);
-        if (preferences.scaled) {
-	        [screenLayer setFrame: CGRectMake(0.0f, 0.0f, 320.0f, 240.0f)];
-		}
-		else {
-	        [screenLayer setFrame: CGRectMake(40.0f, 40.0f, 240.0f, 160.0f)];		
-		}
-    }
-    
-    [CATransaction commit];
-    
 }
 
+-(void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+
+    screenLayer.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
+}
 @end

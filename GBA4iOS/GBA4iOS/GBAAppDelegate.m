@@ -8,6 +8,13 @@
 
 #import "GBAAppDelegate.h"
 #import "../../iGBA/iphone/gpSPhone/src/gpSPhone_iPhone.h"
+#import "UMFeedback.h"
+#import "MobClick.h"
+
+GBAAppDelegate *AppDelegate()
+{
+	return (GBAAppDelegate *)[[UIApplication sharedApplication] delegate];
+}
 
 @class gpSPhone_iphone;
 
@@ -18,53 +25,72 @@ extern int gpSPhone_SavePreferences();
 @implementation GBAAppDelegate
 
 @synthesize window = _window;
+@synthesize popoverVC;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    // Override point for customization after application launch.
-    /*if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
-        UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
-        splitViewController.delegate = (id)navigationController.topViewController;
-    }*/
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    if (![defaults objectForKey:@"firstRun"]) {
-        [defaults setBool:YES forKey:@"scaled"];
-        [defaults setObject:[NSDate date] forKey:@"firstRun"];
-    }
+{   
+    NSDictionary *firstRunValues = [NSDictionary dictionaryWithObjectsAndKeys:
+									[NSNumber numberWithBool:YES], USER_DEFAULT_KEY_AUTOSAVE,
+									[NSNumber numberWithBool:YES], USER_DEFAULT_KEY_SMOOTH_SCALING,
+                                    [NSNumber numberWithBool:YES],
+                                    USER_DEFAULT_KEY_SOUND,
+									nil];
+	
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	
+	for (NSString *defaultKey in [firstRunValues allKeys])
+	{
+		NSNumber *value = [defaults objectForKey:defaultKey];
+		if (!value)
+		{
+			value = [firstRunValues objectForKey:defaultKey];
+			[defaults setObject:value forKey:defaultKey];
+		}
+	}
     
     [self updatePreferences];
+    
+    NSFileManager* fm = [NSFileManager defaultManager];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+    documentsDirectoryPath = [documentsDirectoryPath stringByAppendingPathComponent:@"saves"];
+    [fm createDirectoryAtPath:documentsDirectoryPath withIntermediateDirectories:YES attributes:nil error:nil];
+
+    gameListVC = [[GameListViewController alloc]init];
+    
+    [MobClick startWithAppkey:kUMengAppKey];
+    [[DianJinOfferPlatform defaultPlatform] setAppId:kDianjinAppKey andSetAppKey:kDianjinAppSecrect];
+	[[DianJinOfferPlatform defaultPlatform] setOfferViewColor:kDJBrownColor];
+    [UMFeedback checkWithAppkey:kUMengAppKey];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRecNewMsg:) name:UMFBCheckFinishedNotification object:nil];
+    
+    gameVC = [[UINavigationController alloc] initWithRootViewController:gameListVC];
+    [gameVC setNavigationBarHidden:YES];
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.rootViewController = gameVC;
+    [self.window makeKeyAndVisible];
     
     return YES;
 }
 							
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-    // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
 #pragma mark - Preferences
@@ -82,9 +108,93 @@ extern int gpSPhone_SavePreferences();
 
 
 
+-(void)showSettingPopup:(BOOL)show
+{
+    if (show) {
+        if (isPad()) {
+            if (popoverVC == nil) {
+                settingVC = [[SettingViewController alloc]initWithNibName:nil bundle:nil];
+                popoverVC = [[UIPopoverController alloc] initWithContentViewController:settingVC];
+                popoverVC.delegate = self;
+            }
+            
+            CGRect rect;
+            switch (gameVC.interfaceOrientation) {
+                case UIInterfaceOrientationLandscapeLeft:
+                case UIInterfaceOrientationLandscapeRight:
+                    rect = CGRectMake(100, 60, 10, 10);
+                    [popoverVC presentPopoverFromRect:rect inView:gameVC.view permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
+                    break;
+                case UIInterfaceOrientationPortrait:
+                case UIInterfaceOrientationPortraitUpsideDown:
+                    rect = CGRectMake(400, 580, 10, 10);
+                    [popoverVC presentPopoverFromRect:rect inView:gameVC.view permittedArrowDirections:UIPopoverArrowDirectionDown animated:YES];
+                    break;
+                default:
+                    break;
+            }
+            
+        } else {
+            if (settingVC == nil) {
+                settingVC = [[SettingViewController alloc]initWithNibName:nil bundle:nil];
+            }
+            
+            [gameVC pushViewController:settingVC animated:YES];
+        }
+    } else {
+        if (isPad()) {
+            [popoverVC dismissPopoverAnimated:YES];
+        } else {
+            [settingVC.navigationController popViewControllerAnimated:YES];
+        }
+    }
+    
+}
 
+-(void)showGameList
+{
+    if (isPad()) {
+        [popoverVC dismissPopoverAnimated:NO];
+    }
+    
+    [gameVC popToRootViewControllerAnimated:YES];
+}
 
+-(void)restartGame
+{
+    if (isPad()) {
+        [popoverVC dismissPopoverAnimated:NO];
+    }
+    
+    [gameVC popToRootViewControllerAnimated:NO];
+    [gameListVC restartGame];
+}
 
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
+}
+
+-(void)onRecNewMsg:(NSNotification*)notification
+{
+    NSArray * newReplies = [notification.userInfo objectForKey:@"newReplies"];
+    if (!newReplies) {
+        return;
+    }
+    
+    UIAlertView *alertView;
+    NSString *title = [NSString stringWithFormat:@"有%d条新回复", [newReplies count]];
+    NSMutableString *content = [NSMutableString string];
+    for (int i = 0; i < [newReplies count]; i++) {
+        NSString * dateTime = [[newReplies objectAtIndex:i] objectForKey:@"datetime"];
+        NSString *_content = [[newReplies objectAtIndex:i] objectForKey:@"content"];
+        [content appendString:[NSString stringWithFormat:@"%d: %@---%@\n", i+1, _content, dateTime]];
+    }
+    
+    alertView = [[UIAlertView alloc] initWithTitle:title message:content delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    ((UILabel *) [[alertView subviews] objectAtIndex:1]).textAlignment = NSTextAlignmentLeft ;
+    [alertView show];
+    
+}
 
 
 

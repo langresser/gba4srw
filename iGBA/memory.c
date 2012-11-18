@@ -3176,31 +3176,6 @@ void load_state(char *savestate_filename)
 
     oam_update = 1;
     gbc_sound_update = 1;
-    /*if(strcmp(current_gamepak_filename, gamepak_filename))
-    {
-      u32 dot_position = strcspn(current_gamepak_filename, ".");
-
-      // We'll let it slide if the filenames of the savestate and
-      // the gamepak are similar enough.
-      //strcpy(gamepak_filename, current_gamepak_filename);
-      if(strncmp(savestate_filename, current_gamepak_filename, dot_position))
-      {
-          printf("WTF");
-        if(load_gamepak(gamepak_filename) != -1)
-        {
-          reset_gba();
-            printf("OH CRAP");
-          // Okay, so this takes a while, but for now it works.
-          load_state(savestate_filename);
-        }
-        else
-        {
-          quit();
-        }
-
-        return;
-      }
-    }*/
 
     for(i = 0; i < 512; i++)
     {
@@ -3227,8 +3202,10 @@ u8 *write_mem_ptr;
 void save_state(char *savestate_filename, u16 *screen_capture)
 {
   write_mem_ptr = savestate_write_buffer;
-  file_open(savestate_file, savestate_filename, write);
-  if(file_check_valid(savestate_file))
+    printf("save_state:%s\n", savestate_filename);
+    FILE*  savestate_file = fopen(savestate_filename, "wb");
+    printf("save_state_file:%d\n", savestate_file);
+  if(savestate_file)
   {
     time_t current_time;
     file_write_mem(savestate_file, screen_capture, 240 * 160 * 2);
@@ -3237,10 +3214,10 @@ void save_state(char *savestate_filename, u16 *screen_capture)
     file_write_mem_variable(savestate_file, current_time);
 
     savestate_block(write_mem);
-    file_write(savestate_file, savestate_write_buffer,
-     sizeof(savestate_write_buffer));
+    fwrite(savestate_write_buffer,
+     sizeof(savestate_write_buffer), 1, savestate_file);
 
-    file_close(savestate_file);
+    fclose(savestate_file);
   }
 }
 

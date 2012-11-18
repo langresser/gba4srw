@@ -27,6 +27,7 @@
 #include "../../../main.h"
 
 unsigned short *BaseAddress;
+unsigned long cPad1;
 
 /* Globals (from obj land) */
 extern unsigned long __isLoadState;
@@ -44,6 +45,7 @@ char __fileNameTempSave[512];
 byte IS_DEBUG = 0;
 byte IS_CHANGING_ORIENTATION;
 
+struct gpSPhone_Preferences preferences;
 AQCallbackStruct in;
 long writePtr;
 long playPtr;

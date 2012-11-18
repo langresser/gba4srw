@@ -8,24 +8,24 @@
 
 #import <UIKit/UIKit.h>
 #import "ScreenView.h"
-#import "GBAControllerViewController.h"
+#import "EmuControllerView.h"
 
 @class ScreenView;
 @class GBAControllerViewController;
 
 @interface GBAEmulatorViewController : UIViewController <UIActionSheetDelegate, UIAlertViewDelegate> {
     pthread_t emulation_tid;
+    
+    UIInterfaceOrientation currentOrientation;
+    
+    EmuControllerView* controllerView;
 }
 
 @property (copy, nonatomic) NSString *romPath;
-@property (strong, nonatomic) ScreenView *screenView;
-@property (strong, nonatomic) GBAControllerViewController *controllerViewController;
 @property (strong, nonatomic) NSMutableArray *saveStateArray;
 
 - (void)loadROM:(NSString *)romFilePath;
 - (void)quitROM;
 - (void)pauseMenu;
 - (void)showActionSheetWithTag:(NSInteger)tag;
-- (void)rotateToDeviceOrientation:(UIDeviceOrientation)deviceOrientation;
-
 @end

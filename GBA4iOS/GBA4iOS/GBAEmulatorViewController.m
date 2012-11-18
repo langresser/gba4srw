@@ -38,8 +38,6 @@ float __audioVolume = 1.0;
 
 @implementation GBAEmulatorViewController
 @synthesize romPath;
-@synthesize screenView;
-@synthesize controllerViewController;
 @synthesize saveStateArray;
 @synthesize romSaveStateDirectory;
 
@@ -55,20 +53,20 @@ float __audioVolume = 1.0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    CGRect rect = [UIScreen mainScreen].bounds;
     
-    self.screenView = [[ScreenView alloc] initWithFrame:CGRectMake(0, 0, 320, 240)];
-    self.screenView.backgroundColor = [UIColor blackColor];
-    [self.view addSubview:self.screenView];
+    controllerView = [[EmuControllerView alloc]initWithFrame:rect];
+    [self.view addSubview:controllerView];
     
-    self.controllerViewController= [[GBAControllerViewController alloc] init];
-    self.controllerViewController.view.frame = CGRectMake(0, 0, 320, 480);
-    self.controllerViewController.emulatorViewController = self;
-    [self.view addSubview:self.controllerViewController.view];
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotateOrientation:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
     
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];	//Keep in this method
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotate:) name:UIDeviceOrientationDidChangeNotification object:nil];
-    
-	// Do any additional setup after loading the view.
+    currentOrientation = UIInterfaceOrientationPortrait;
+    CGSize size = [UIScreen mainScreen].bounds.size;
+    int width = size.width < size.height ? size.width : size.height;
+    int height = size.width < size.height ? size.height : size.width;
+    controllerView.frame = CGRectMake(0, 0, width, height);
+    [controllerView changeUI:UIInterfaceOrientationPortrait];
 }
 
 - (void)loadROM:(NSString *)romFilePath {
@@ -95,15 +93,7 @@ float __audioVolume = 1.0;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    if (self.presentingViewController.interfaceOrientation == UIInterfaceOrientationLandscapeRight) {
-        [self rotateToDeviceOrientation:UIDeviceOrientationLandscapeLeft];
-    }
-    else if (self.presentingViewController.interfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
-        [self rotateToDeviceOrientation:UIDeviceOrientationLandscapeRight];
-    }
-        
+    [super viewWillAppear:animated];        
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 }
 
@@ -130,49 +120,62 @@ float __audioVolume = 1.0;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES;
 }
 
 - (BOOL)shouldAutorotate {
-    return NO;
+    return YES;
 }
 
 - (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
-    return UIInterfaceOrientationPortrait;
+    return UIInterfaceOrientationMaskAll;
 }
 
-- (void)didRotate:(NSNotification *)notification {
-    [self rotateToDeviceOrientation:[[UIDevice currentDevice] orientation]];
-}
-
-- (void)rotateToDeviceOrientation:(UIDeviceOrientation)deviceOrientation {    
-    if (deviceOrientation == UIDeviceOrientationFaceUp || deviceOrientation == UIDeviceOrientationFaceDown || deviceOrientation == UIDeviceOrientationPortraitUpsideDown || deviceOrientation == UIDeviceOrientationUnknown) {
-        return;
-    }
-    
-    if (currentDeviceOrientation_ != deviceOrientation) {
-        currentDeviceOrientation_ = deviceOrientation;
+- (void) didRotateOrientation:(NSNotification *)notification {
+    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    if (orientation == UIDeviceOrientationPortrait) {
+        if (currentOrientation == UIInterfaceOrientationPortrait) {
+            return;
+        }
+        currentOrientation = UIInterfaceOrientationPortrait;
+        CGSize size = [UIScreen mainScreen].bounds.size;
+        int width = size.width < size.height ? size.width : size.height;
+        int height = size.width < size.height ? size.height : size.width;
+        controllerView.frame = CGRectMake(0, 0, width, height);
+        [controllerView changeUI:UIInterfaceOrientationPortrait];
+    } else if (orientation == UIDeviceOrientationPortraitUpsideDown) {
+        if (currentOrientation == UIInterfaceOrientationPortraitUpsideDown) {
+            return;
+        }
+        currentOrientation = UIInterfaceOrientationPortraitUpsideDown;
         
-        if (deviceOrientation == UIDeviceOrientationLandscapeLeft) {
-            self.controllerViewController.landscape = YES;
-            self.controllerViewController.imageView.frame = CGRectMake(0, 0, 320, 480);
-            self.controllerViewController.view.transform = CGAffineTransformMakeRotation(RADIANS(0.0));
-            [UIApplication sharedApplication].statusBarOrientation = UIInterfaceOrientationLandscapeRight;
+        CGSize size = [UIScreen mainScreen].bounds.size;
+        int width = size.width < size.height ? size.width : size.height;
+        int height = size.width < size.height ? size.height : size.width;
+        controllerView.frame = CGRectMake(0, 0, width, height);
+        [controllerView changeUI:UIInterfaceOrientationPortraitUpsideDown];
+    } else if (orientation == UIDeviceOrientationLandscapeLeft) {
+        if (currentOrientation == UIInterfaceOrientationLandscapeRight) {
+            return;
         }
-        else if (deviceOrientation == UIDeviceOrientationLandscapeRight) {
-            self.controllerViewController.landscape = YES;
-            self.controllerViewController.imageView.frame = CGRectMake(0, 0, 320, 480);
-            self.controllerViewController.view.transform = CGAffineTransformMakeRotation(RADIANS(180.0));
-            [UIApplication sharedApplication].statusBarOrientation = UIInterfaceOrientationLandscapeLeft;
+        currentOrientation = UIInterfaceOrientationLandscapeRight;
+        
+        CGSize size = [UIScreen mainScreen].bounds.size;
+        int width = size.width > size.height ? size.width : size.height;
+        int height = size.width > size.height ? size.height : size.width;
+        controllerView.frame = CGRectMake(0, 0, width, height);
+        [controllerView changeUI:UIInterfaceOrientationLandscapeRight];
+    } else if (orientation == UIDeviceOrientationLandscapeRight) {
+        if (currentOrientation == UIInterfaceOrientationLandscapeLeft) {
+            return;
         }
-        else if (deviceOrientation == UIDeviceOrientationPortrait) {
-            self.controllerViewController.landscape = NO;
-            self.controllerViewController.imageView.frame = CGRectMake(0, 240, 320, 240);
-            self.controllerViewController.view.transform = CGAffineTransformMakeRotation(RADIANS(0.0));
-            [UIApplication sharedApplication].statusBarOrientation = UIInterfaceOrientationPortrait;
-        }
-        [self.screenView rotateForDeviceOrientation:deviceOrientation];
-        [self.controllerViewController updateUI];
+        currentOrientation = UIInterfaceOrientationLandscapeLeft;
+        
+        CGSize size = [UIScreen mainScreen].bounds.size;
+        int width = size.width > size.height ? size.width : size.height;
+        int height = size.width > size.height ? size.height : size.width;
+        controllerView.frame = CGRectMake(0, 0, width, height);
+        [controllerView changeUI:UIInterfaceOrientationLandscapeLeft];
     }
 }
 
