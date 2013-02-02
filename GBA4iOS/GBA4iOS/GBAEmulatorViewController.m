@@ -61,12 +61,12 @@ float __audioVolume = 1.0;
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotateOrientation:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
     
-    currentOrientation = UIInterfaceOrientationPortrait;
+    currentOrientation = -1;
     CGSize size = [UIScreen mainScreen].bounds.size;
     int width = size.width < size.height ? size.width : size.height;
     int height = size.width < size.height ? size.height : size.width;
     controllerView.frame = CGRectMake(0, 0, width, height);
-    [controllerView changeUI:UIInterfaceOrientationPortrait];
+    [self didRotateOrientation:nil];
 }
 
 - (void)loadROM:(NSString *)romFilePath {
@@ -81,15 +81,17 @@ float __audioVolume = 1.0;
     pthread_create(&emulation_tid, NULL, gpSPhone_Thread_Start, NULL);
 }
 
+-(void)dealloc
+{
+    __emulation_paused = 0;
+    [self quitROM];
+}
+
 - (void)quitROM {
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        gpSPhone_Halt();
-        
-        pthread_join(emulation_tid, NULL);
-    });
-    [UIApplication sharedApplication].statusBarHidden = NO;
-    [[self presentingViewController] dismissModalViewControllerAnimated:YES];
+    gpSPhone_Halt();
+    
+    pthread_join(emulation_tid, NULL);
 }
 
 - (void)viewWillAppear:(BOOL)animated {

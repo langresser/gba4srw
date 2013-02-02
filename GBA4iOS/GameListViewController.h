@@ -15,6 +15,8 @@
 
 @interface GameListViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, DianJinOfferBannerDelegate, UIAlertViewDelegate, DianJinOfferPlatformProtocol>
 {
+    UIImageView* bgView;
+    DianJinOfferBanner *_banner;
     UITableView* m_tableView;
     
     NSMutableArray* m_romData;

@@ -12,6 +12,14 @@
 		3B2021DE165912E000FD95D2 /* icon_72.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B2021DA165912E000FD95D2 /* icon_72.png */; };
 		3B2021DF165912E000FD95D2 /* icon_114.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B2021DB165912E000FD95D2 /* icon_114.png */; };
 		3B2021E0165912E000FD95D2 /* icon_144.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B2021DC165912E000FD95D2 /* icon_144.png */; };
+		3B3136CD16596B3C00F9AF1D /* srwa.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3B3136C716596B3C00F9AF1D /* srwa.jpg */; };
+		3B3136CE16596B3C00F9AF1D /* srwd.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3B3136C816596B3C00F9AF1D /* srwd.jpg */; };
+		3B3136CF16596B3C00F9AF1D /* srwj.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3B3136C916596B3C00F9AF1D /* srwj.jpg */; };
+		3B3136D016596B3C00F9AF1D /* srwog1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3B3136CA16596B3C00F9AF1D /* srwog1.jpg */; };
+		3B3136D116596B3C00F9AF1D /* srwog2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3B3136CB16596B3C00F9AF1D /* srwog2.jpg */; };
+		3B3136D216596B3C00F9AF1D /* srwr.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3B3136CC16596B3C00F9AF1D /* srwr.jpg */; };
+		3B3136D416596C1A00F9AF1D /* bg.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3B3136D316596C1A00F9AF1D /* bg.jpg */; };
+		3B3136D61659755C00F9AF1D /* gui_lock.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B3136D51659755C00F9AF1D /* gui_lock.png */; };
 		3B3F04BC165542BB006ABABC /* DView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F04B5165542BB006ABABC /* DView.m */; };
 		3B3F04BD165542BB006ABABC /* EmuControllerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F04B7165542BB006ABABC /* EmuControllerView.m */; };
 		3B3F04BF165542BB006ABABC /* GameListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F04BB165542BB006ABABC /* GameListViewController.m */; };
@@ -143,6 +151,14 @@
 		3B2021DA165912E000FD95D2 /* icon_72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_72.png; path = Resources/icon_72.png; sourceTree = SOURCE_ROOT; };
 		3B2021DB165912E000FD95D2 /* icon_114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_114.png; path = Resources/icon_114.png; sourceTree = SOURCE_ROOT; };
 		3B2021DC165912E000FD95D2 /* icon_144.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_144.png; path = Resources/icon_144.png; sourceTree = SOURCE_ROOT; };
+		3B3136C716596B3C00F9AF1D /* srwa.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = srwa.jpg; path = rom/srwa.jpg; sourceTree = "<group>"; };
+		3B3136C816596B3C00F9AF1D /* srwd.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = srwd.jpg; path = rom/srwd.jpg; sourceTree = "<group>"; };
+		3B3136C916596B3C00F9AF1D /* srwj.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = srwj.jpg; path = rom/srwj.jpg; sourceTree = "<group>"; };
+		3B3136CA16596B3C00F9AF1D /* srwog1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = srwog1.jpg; path = rom/srwog1.jpg; sourceTree = "<group>"; };
+		3B3136CB16596B3C00F9AF1D /* srwog2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = srwog2.jpg; path = rom/srwog2.jpg; sourceTree = "<group>"; };
+		3B3136CC16596B3C00F9AF1D /* srwr.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = srwr.jpg; path = rom/srwr.jpg; sourceTree = "<group>"; };
+		3B3136D316596C1A00F9AF1D /* bg.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = bg.jpg; path = Resources/bg.jpg; sourceTree = SOURCE_ROOT; };
+		3B3136D51659755C00F9AF1D /* gui_lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gui_lock.png; path = Resources/gui_lock.png; sourceTree = SOURCE_ROOT; };
 		3B3F04B4165542BB006ABABC /* DView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DView.h; sourceTree = SOURCE_ROOT; };
 		3B3F04B5165542BB006ABABC /* DView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DView.m; sourceTree = SOURCE_ROOT; };
 		3B3F04B6165542BB006ABABC /* EmuControllerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmuControllerView.h; sourceTree = SOURCE_ROOT; };
@@ -405,6 +421,12 @@
 		3B3F0512165542E4006ABABC /* Roms */ = {
 			isa = PBXGroup;
 			children = (
+				3B3136C716596B3C00F9AF1D /* srwa.jpg */,
+				3B3136C816596B3C00F9AF1D /* srwd.jpg */,
+				3B3136C916596B3C00F9AF1D /* srwj.jpg */,
+				3B3136CA16596B3C00F9AF1D /* srwog1.jpg */,
+				3B3136CB16596B3C00F9AF1D /* srwog2.jpg */,
+				3B3136CC16596B3C00F9AF1D /* srwr.jpg */,
 				3B0B4ADB16558A3B00F12BB5 /* srwa.gba */,
 				3B3F06C91655865B006ABABC /* srwd.gba */,
 				3B3F06CA1655865B006ABABC /* srwj.gba */,
@@ -518,6 +540,8 @@
 		BFE1E7C91575D54C00D5CA43 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3B3136D51659755C00F9AF1D /* gui_lock.png */,
+				3B3136D316596C1A00F9AF1D /* bg.jpg */,
 				3B2021D9165912E000FD95D2 /* icon_57.png */,
 				3B2021DA165912E000FD95D2 /* icon_72.png */,
 				3B2021DB165912E000FD95D2 /* icon_114.png */,
@@ -746,6 +770,14 @@
 				3B2021DE165912E000FD95D2 /* icon_72.png in Resources */,
 				3B2021DF165912E000FD95D2 /* icon_114.png in Resources */,
 				3B2021E0165912E000FD95D2 /* icon_144.png in Resources */,
+				3B3136CD16596B3C00F9AF1D /* srwa.jpg in Resources */,
+				3B3136CE16596B3C00F9AF1D /* srwd.jpg in Resources */,
+				3B3136CF16596B3C00F9AF1D /* srwj.jpg in Resources */,
+				3B3136D016596B3C00F9AF1D /* srwog1.jpg in Resources */,
+				3B3136D116596B3C00F9AF1D /* srwog2.jpg in Resources */,
+				3B3136D216596B3C00F9AF1D /* srwr.jpg in Resources */,
+				3B3136D416596C1A00F9AF1D /* bg.jpg in Resources */,
+				3B3136D61659755C00F9AF1D /* gui_lock.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -882,7 +914,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GBA4iOS/GBA4iOS-Prefix.pch";
 				INFOPLIST_FILE = "GBA4iOS/GBA4iOS-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../Library/Developer/Xcode/DerivedData/GBA4iOS-aayhduesxakweacixeckqrqciynb/Build/Products/Debug-iphoneos\"",
@@ -918,7 +950,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GBA4iOS/GBA4iOS-Prefix.pch";
 				INFOPLIST_FILE = "GBA4iOS/GBA4iOS-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../Library/Developer/Xcode/DerivedData/GBA4iOS-aayhduesxakweacixeckqrqciynb/Build/Products/Debug-iphoneos\"",

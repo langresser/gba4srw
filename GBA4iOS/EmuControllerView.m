@@ -325,6 +325,7 @@ extern void init_sound();
     
     //DPAD---
     [self buildDPadView];
+    dpadView.alpha = 1;
     
     if(enable_dview)
     {
@@ -390,6 +391,7 @@ extern void init_sound();
     screenView.frame = r;
 
     [self buildDPadView];
+    dpadView.alpha = 0.5;
     
     if(enable_dview)
     {

@@ -50,6 +50,7 @@ void updateScreen() {
 }
 
 - (void)dealloc {
+    sharedInstance = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     LOGDEBUG("ScreenView.dealloc()");
 //    [ timer invalidate];

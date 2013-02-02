@@ -217,7 +217,7 @@ extern volatile int __emulation_paused;
     } else if (section == 1) {
         return 3;
     } else if (section == 2) {
-        return 3;
+        return 4;
     }
     return 0;
 }
@@ -345,7 +345,7 @@ extern volatile int __emulation_paused;
         static NSString* cellIdent = @"MyCellGongl";
         cell = [tableView dequeueReusableCellWithIdentifier:cellIdent];
         if (!cell) {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdent];
+            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdent];
             cell.textLabel.font = [UIFont systemFontOfSize:17.0];
             cell.selectionStyle = UITableViewCellSelectionStyleGray;
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -354,12 +354,19 @@ extern volatile int __emulation_paused;
         switch (indexPath.row) {
             case 0:
                 cell.textLabel.text = @"意见反馈";
+                cell.detailTextLabel.text = @"此非即时通讯，您可以通过微博与我们联系";
                 break;
             case 1:
-                cell.textLabel.text = @"论坛交流";
+                cell.textLabel.text = @"新浪微博(@BananaStudio)";
+                cell.detailTextLabel.text = @"关注我们，了解最新游戏发布及版本更新";
                 break;
             case 2:
+                cell.textLabel.text = @"腾讯微博(@BananaStudio)";
+                cell.detailTextLabel.text = @"关注我们，了解最新游戏发布及版本更新";
+                break;
+            case 3:
                 cell.textLabel.text = @"精品推荐";
+                cell.detailTextLabel.text = @"";
                 break;
             default:
                 break;
@@ -410,9 +417,12 @@ extern volatile int __emulation_paused;
                 [UMFeedback showFeedback:self withAppkey:kUMengAppKey];
                 break;
             case 1:
-                openWebsite("http://bananastudio.cn/bbs/forum.php");
+                openWebsite("http://weibo.com/bananastudi0");
                 break;
             case 2:
+                openWebsite("http://t.qq.com/BananaStudio");
+                break;
+            case 3:
                 [[DianJinOfferPlatform defaultPlatform]showOfferWall: self delegate:self];
                 break;
                 break;
